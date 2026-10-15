@@ -148,7 +148,7 @@ Panel {
       Column {
         id: panelColumn
         width: parent.width
-        spacing: Style.space(14)
+        spacing: Style.space(10)
 
         PanelHero {
           width: parent.width
@@ -183,7 +183,7 @@ Panel {
         Column {
           visible: root.connected
           width: parent.width
-          spacing: Style.space(14)
+          spacing: Style.space(10)
 
           PanelSeparator { foreground: root.foreground }
 
@@ -198,7 +198,7 @@ Panel {
           Column {
             visible: !!root.m4 && root.m4.noise === "custom"
             width: parent.width
-            spacing: Style.space(6)
+            spacing: Style.space(2)
 
             Item {
               width: parent.width
@@ -349,7 +349,7 @@ Panel {
 
     visible: !!root.m4 && items.some(function(item) { return root.m4[item.key] !== null && root.m4[item.key] !== undefined })
     width: parent.width
-    spacing: Style.space(6)
+    spacing: Style.space(2)
 
     PanelSectionHeader {
       text: switches.label
@@ -366,7 +366,8 @@ Panel {
 
         visible: value !== null && value !== undefined
         width: switches.width
-        implicitHeight: toggle.implicitHeight
+        // The switch's focus ring may overhang; rows only need the track.
+        implicitHeight: toggle.trackHeight + Style.space(6)
 
         Text {
           anchors.left: parent.left

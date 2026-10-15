@@ -80,14 +80,3 @@ function bits(format) {
   var m = /(\d+)/.exec(format || "")
   return m ? m[1] + "-bit " : ""
 }
-
-function noiseLabel(state) {
-  if (!state || !state.connected) return ""
-  if (state.noise === "off") return "ANC off"
-  return state.noise === "adaptive" ? "Adaptive" : "Transparency " + state.transparency + "%"
-}
-
-function tooltip(state, error) {
-  if (!state || !state.connected) return "Momentum 4: " + status(state, error)
-  return "Momentum 4: " + state.battery + "% · " + noiseLabel(state)
-}

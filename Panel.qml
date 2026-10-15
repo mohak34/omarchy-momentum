@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import QtQuick.Shapes
 import Quickshell.Io
+import Quickshell.Bluetooth
 import qs.Commons
 import qs.Ui
 import "Model.js" as Model
@@ -10,15 +11,14 @@ import "Model.js" as Model
 // through the bundled m4.py, which runs once per action and exits, so the
 // widget keeps nothing resident besides this QML. Changes are queued per
 // setting: dragging the slider sends only the latest value once the previous
-// command returns. While the headphones are not connected over Bluetooth a
-// refresh only reads the audio output and never touches the radio.
+// command returns. Nothing polls: the headphones are read when the panel
+// opens and when they connect or disconnect, which Bluetooth reports itself.
 Panel {
   id: root
   moduleName: "mohak34.momentum"
   manageIpc: false
 
   readonly property var helper: ["python3", "-I", decodeURIComponent(Qt.resolvedUrl("m4.py").toString().replace(/^file:\/\//, ""))]
-  readonly property int refreshMs: Math.max(30, parseInt(setting("refreshIntervalSec", 120), 10) || 120) * 1000
 
   // Last reply from m4.py status, see State in m4.py.
   property var m4: null
@@ -30,6 +30,9 @@ Panel {
   property real wheelAccumulator: 0
 
   readonly property bool connected: !!m4 && m4.connected
+  readonly property bool linked: (Bluetooth.devices ? Bluetooth.devices.values : []).some(function(d) {
+    return d.connected && String(d.name).toUpperCase().indexOf("MOMENTUM 4") >= 0
+  })
   readonly property bool hasQueue: Object.keys(queued).length > 0
   readonly property color foreground: bar ? bar.foreground : Color.foreground
   readonly property color dim: Qt.darker(foreground, 1.4)
@@ -76,6 +79,8 @@ Panel {
   }
 
   onOpenedChanged: if (opened) refresh()
+  // One read on connect so right-click and scroll know the noise mode.
+  onLinkedChanged: refresh()
 
   Process {
     id: getProc
@@ -96,14 +101,6 @@ Panel {
     onExited: Qt.callLater(root.flush)
   }
 
-  Timer {
-    interval: root.opened ? 10000 : root.refreshMs
-    running: true
-    repeat: true
-    triggeredOnStart: true
-    onTriggered: root.refresh()
-  }
-
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
 
@@ -119,8 +116,8 @@ Panel {
         }
       }
     }
-    dimmed: !root.connected
-    tooltipText: Model.tooltip(root.m4, root.error)
+    dimmed: !root.linked
+    tooltipText: "Momentum 4"
     onPressed: function(b) {
       if (b === Qt.RightButton) root.cycleNoise()
       else root.toggle()

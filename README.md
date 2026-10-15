@@ -26,7 +26,7 @@ omarchy plugin add https://github.com/mohak34/omarchy-momentum.git --yes
 omarchy plugin enable mohak34.momentum
 ```
 
-Nothing to build. The widget runs `m4.py`, a standard-library Python script that reads or changes the headphones once and exits, so nothing stays running between clicks. While the panel is closed it refreshes every two minutes (configurable in the widget settings), and only talks to the headphones while they are connected over Bluetooth.
+Nothing to build. The widget runs `m4.py`, a standard-library Python script that reads or changes the headphones once and exits, so nothing stays running between clicks. Nothing polls either: it reads the headphones when you open the panel and once when they connect.
 
 From a terminal:
 

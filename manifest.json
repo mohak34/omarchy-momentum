@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "mohak34.momentum",
+  "name": "Momentum 4",
+  "version": "0.1.0",
+  "author": "mohak34",
+  "license": "MIT",
+  "description": "Sennheiser Momentum 4 headphones in the Omarchy bar: battery, codec, noise cancelling, transparency, anti-wind and the headphone settings over Bluetooth.",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "Panel.qml" },
+  "barWidget": {
+    "displayName": "Momentum 4",
+    "description": "Click for the headphone panel, right-click to cycle noise mode, scroll to change transparency in Custom mode.",
+    "category": "Audio",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "refreshIntervalSec": 120
+    },
+    "schema": [
+      { "key": "refreshIntervalSec", "type": "integer", "label": "Refresh interval (seconds)", "min": 30, "max": 3600, "step": 30, "defaultValue": 120 }
+    ]
+  }
+}

@@ -35,11 +35,6 @@ var behaviour = [
   { setting: "comfort-call", key: "comfortCall", label: "Comfort call" }
 ]
 
-// Nerd Font md-headphones / md-headphones-off.
-function glyph(connected) {
-  return String.fromCodePoint(connected ? 0xF02CB : 0xF07CE)
-}
-
 function copy(obj) {
   var out = {}
   for (var k in obj) out[k] = obj[k]

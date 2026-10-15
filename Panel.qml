@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import QtQuick.Shapes
 import Quickshell.Io
 import qs.Commons
 import qs.Ui
@@ -110,7 +111,14 @@ Panel {
     id: button
     anchors.fill: parent
     bar: root.bar
-    text: Model.glyph(root.connected)
+    iconComponent: Component {
+      Item {
+        Logo {
+          anchors.centerIn: parent
+          size: Style.space(12)
+        }
+      }
+    }
     dimmed: !root.connected
     tooltipText: Model.tooltip(root.m4, root.error)
     onPressed: function(b) {
@@ -159,13 +167,7 @@ Panel {
           fontFamily: root.fontFamily
           iconOpacity: root.connected ? 1.0 : 0.5
           iconComponent: Component {
-            Text {
-              textFormat: Text.PlainText
-              text: Model.glyph(root.connected)
-              color: root.foreground
-              font.family: root.fontFamily
-              font.pixelSize: Style.font.display
-            }
+            Logo { size: Style.font.display }
           }
         }
 
@@ -296,6 +298,21 @@ Panel {
           }
         }
       }
+    }
+  }
+
+  // Sennheiser's logo from Simple Icons (CC0), drawn in the theme colour.
+  component Logo: Shape {
+    property real size: 16
+    width: size
+    height: size
+    preferredRendererType: Shape.CurveRenderer
+
+    ShapePath {
+      fillColor: root.foreground
+      strokeWidth: -1
+      scale: Qt.size(size / 24, size / 24)
+      PathSvg { path: "M0 3v18h24V3zm13.209 1.659c-1.428.548-2.799 1.757-3.905 4.182-.321.703-.925 2.062-1.2 2.67-2.224 4.882-3.364 5.932-6.72 5.932V4.35H13.15c.184-.011.235.25.06.309zm9.428 1.894V19.65H10.851c-.181.005-.227-.25-.055-.309 1.427-.548 2.798-1.757 3.904-4.182.321-.703.926-2.062 1.2-2.67 2.22-4.882 3.36-5.932 6.716-5.932z" }
     }
   }
 

@@ -24,6 +24,7 @@ audio output is reported.
 import fcntl
 import json
 import os
+import signal
 import socket
 import struct
 import subprocess
@@ -35,6 +36,7 @@ from typing import Any, Literal, Self, TypedDict
 MAGIC = b"\xff\x03"
 VENDOR = 0x0495  # Sennheiser
 TIMEOUT = 3.0
+DEADLINE = 10  # whole run, in case a socket wait ignores TIMEOUT
 # GAIA isn't advertised cleanly over SDP, so try the channels it is usually
 # on. The one that answered last time goes first.
 CHANNELS = [15, 1, 2, 14, 12, 3, 4, 5, 6, 7, 8, 9, 10, 11]
@@ -116,7 +118,14 @@ class State(TypedDict, total=False):
     firmware: str | None
 
 
+def timed_out(*_: object) -> None:
+    raise M4Error("headphones not responding")
+
+
+# The panel skips refreshes while a run is in flight, so a run must never hang.
 def main(argv: list[str]) -> int:
+    signal.signal(signal.SIGALRM, timed_out)
+    signal.alarm(DEADLINE)
     try:
         out: Any = run(argv)
         code = 0

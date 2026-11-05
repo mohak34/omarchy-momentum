@@ -24,6 +24,7 @@ audio output is reported.
 import fcntl
 import json
 import os
+import re
 import signal
 import socket
 import struct
@@ -342,15 +343,9 @@ def address() -> str | None:
         ).stdout
     except (OSError, subprocess.TimeoutExpired):
         return None
-    for line in out.splitlines():
-        parts = line.split(maxsplit=2)
-        if (
-            len(parts) == 3
-            and parts[0] == "Device"
-            and "MOMENTUM 4" in parts[2].upper()
-        ):
-            return parts[1]
-    return None
+    # bluetoothctl colours the line gray for devices with hidden advertising flags.
+    match = re.search(r"Device (\S+) .*MOMENTUM 4", out, re.IGNORECASE)
+    return match[1] if match else None
 
 
 def output(mac: str | None = None) -> Output:
